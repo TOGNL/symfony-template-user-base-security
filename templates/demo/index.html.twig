@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Démo Assets{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    <div class="mb-4">
+        <h1 class="h3 fw-bold">Asset Mapper &amp; Stimulus</h1>
+        <p class="text-muted">Comment Symfony gère le CSS et le JavaScript — sans npm, sans webpack.</p>
+    </div>
+
+    {# ------------------------------------------------------------------ #}
+    {# SECTION 1 — Asset Mapper                                           #}
+    {# ------------------------------------------------------------------ #}
+    <div class="card mb-4">
+        <div class="card-header">1. L'Asset Mapper — comment ça marche ?</div>
+        <div class="card-body">
+            <p>
+                Avec Symfony, pas besoin de <code>npm install</code> ni d'un outil de compilation
+                (webpack, vite…). L'<strong>Asset Mapper</strong> sert les fichiers du dossier
+                <code>assets/</code> directement au navigateur, grâce au mécanisme natif des
+                navigateurs modernes : les <strong>ES modules</strong>.
+            </p>
+            <p>
+                Dans le template de base (<code>base.html.twig</code>), une seule ligne suffit
+                pour tout charger :
+            </p>
+            <pre class="code-block">{{ '{{ importmap(\'app\') }}' }}</pre>
+            <p class="mt-3 mb-0">
+                Cette fonction Twig génère dans le <code>&lt;head&gt;</code> une balise
+                <code>&lt;script type="importmap"&gt;</code> qui indique au navigateur où trouver
+                chaque module JavaScript, puis charge <code>assets/app.js</code> comme point
+                d'entrée.
+            </p>
+        </div>
+    </div>
+
+    {# ------------------------------------------------------------------ #}
+    {# SECTION 2 — app.js : le point d'entrée                            #}
+    {# ------------------------------------------------------------------ #}
+    <div class="card mb-4">
+        <div class="card-header">2. <code>assets/app.js</code> — le point d'entrée</div>
+        <div class="card-body">
+            <p>
+                Tout part de ce fichier. C'est lui qu'<code>importmap('app')</code> charge en premier.
+                Il importe à son tour les autres fichiers :
+            </p>
+            <pre class="code-block"><span class="keyword">import</span> <span class="string">'./bootstrap.js'</span>;          <span class="comment">// démarre Stimulus (auto-découverte des controllers)</span>
+<span class="keyword">import</span> <span class="string">'./styles/app.css'</span>;       <span class="comment">// votre CSS personnalisé</span>
+<span class="keyword">import</span> <span class="string">'bootstrap/dist/css/bootstrap.min.css'</span>;  <span class="comment">// Bootstrap CSS</span></pre>
+            <p class="mt-3 mb-0">
+                Pour ajouter un nouveau fichier CSS ou JS, il suffit de l'importer ici.
+                Les paquets tiers (Bootstrap, Stimulus…) sont gérés par Composer
+                et stockés dans <code>assets/vendor/</code>.
+            </p>
+        </div>
+    </div>
+
+    {# ------------------------------------------------------------------ #}
+    {# SECTION 3 — CSS personnalisé                                       #}
+    {# ------------------------------------------------------------------ #}
+    <div class="card mb-4">
+        <div class="card-header">3. Ajouter du CSS personnalisé</div>
+        <div class="card-body">
+            <p>
+                Votre CSS se trouve dans <code>assets/styles/app.css</code>.
+                Voici par exemple comment cette page définit les styles des blocs de code :
+            </p>
+            <pre class="code-block"><span class="comment">/* assets/styles/app.css */</span>
+
+pre.code-block {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    border-radius: .5rem;
+    padding: 1rem;
+}</pre>
+            <p class="mt-3 mb-0">
+                Aucune compilation nécessaire. Modifiez le fichier, rechargez la page :
+                le navigateur récupère directement la nouvelle version.
+            </p>
+        </div>
+    </div>
+
+    {# ------------------------------------------------------------------ #}
+    {# SECTION 4 — Stimulus                                               #}
+    {# ------------------------------------------------------------------ #}
+    <div class="card mb-4">
+        <div class="card-header">4. Stimulus — JavaScript sans bundler</div>
+        <div class="card-body">
+            <p>
+                <strong>Stimulus</strong> est un framework JavaScript léger intégré à Symfony.
+                Il connecte des <em>contrôleurs</em> JavaScript à des éléments HTML via des
+                attributs <code>data-*</code>.
+            </p>
+            <p>
+                Tout fichier nommé <code>assets/controllers/<strong>nom</strong>_controller.js</code>
+                est automatiquement découvert. Le nom du contrôleur correspond au préfixe du fichier.
+            </p>
+            <pre class="code-block"><span class="comment">// assets/controllers/counter_controller.js</span>
+<span class="keyword">import</span> { Controller } <span class="keyword">from</span> <span class="string">'@hotwired/stimulus'</span>;
+
+<span class="keyword">export default class extends</span> Controller {
+    <span class="keyword">static</span> targets = [<span class="string">'count'</span>];   <span class="comment">// référence à [data-counter-target="count"]</span>
+
+    connect() { this.value = 0; }  <span class="comment">// appelé au chargement de l'élément</span>
+
+    increment() {
+        this.value++;
+        this.countTarget.textContent = this.value;
+    }
+}</pre>
+
+            <p class="mt-3">Dans le HTML, on active ce contrôleur avec <code>data-controller="counter"</code> :</p>
+
+            <pre class="code-block"><span class="comment">{# templates/demo/index.html.twig #}</span>
+&lt;div data-controller=<span class="string">"counter"</span>&gt;
+    Compteur : &lt;strong data-counter-target=<span class="string">"count"</span>&gt;0&lt;/strong&gt;
+    &lt;button data-action=<span class="string">"counter#increment"</span>&gt;+&lt;/button&gt;
+    &lt;button data-action=<span class="string">"counter#decrement"</span>&gt;-&lt;/button&gt;
+&lt;/div&gt;</pre>
+
+            <p class="mt-3 fw-semibold">Résultat en direct :</p>
+
+            <div class="d-inline-flex align-items-center gap-3 bg-light border rounded px-4 py-3"
+                 data-controller="counter">
+                <span>Compteur :
+                    <strong class="fs-5" data-counter-target="count">0</strong>
+                </span>
+                <button class="btn btn-success btn-sm" data-action="counter#increment">+ 1</button>
+                <button class="btn btn-danger btn-sm" data-action="counter#decrement">- 1</button>
+                <button class="btn btn-outline-secondary btn-sm" data-action="counter#reset">Reset</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

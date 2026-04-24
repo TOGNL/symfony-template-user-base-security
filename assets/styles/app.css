@@ -1,3 +1,46 @@
 body {
-    background-color: skyblue;
+    background-color: #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.brand-accent {
+    color: #a78bfa;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 2px solid #f1f5f9;
+    font-weight: 600;
+}
+
+pre.code-block {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    border-radius: .5rem;
+    padding: 1rem;
+    font-size: .85rem;
+    overflow-x: auto;
+}
+
+pre.code-block .comment {
+    color: #64748b;
+}
+
+pre.code-block .keyword {
+    color: #a78bfa;
+}
+
+pre.code-block .string {
+    color: #86efac;
 }

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    <div class="mb-4">
+        <h1 class="h3 fw-bold">Bienvenue 👋</h1>
+        <p class="text-muted mb-1">Connecté en tant que <strong>{{ app.user.userIdentifier }}</strong></p>
+        <div>
+            {% for role in app.user.roles %}
+                <span class="badge bg-secondary me-1">{{ role }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">Démo Assets &amp; Stimulus</div>
+                <div class="card-body">
+                    <p class="card-text text-muted">
+                        Découvrez comment Symfony gère les fichiers CSS et JavaScript
+                        grâce à l'<strong>Asset Mapper</strong>, sans étape de compilation.
+                    </p>
+                    <a href="{{ path('app_demo') }}" class="btn btn-primary btn-sm">Voir la démo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">À vous de jouer</div>
+                <div class="card-body">
+                    <p class="card-text text-muted">
+                        Créez vos propres contrôleurs avec <code>symfony console make:controller</code>,
+                        ajoutez des entités avec <code>make:entity</code>, et construisez votre application.
+                    </p>
+                    <a href="https://symfony.com/doc/current/index.html"
+                       class="btn btn-outline-secondary btn-sm"
+                       target="_blank" rel="noopener">Documentation Symfony</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

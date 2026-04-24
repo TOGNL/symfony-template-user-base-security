@@ -1,17 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Mon Application{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
-
+        {% block stylesheets %}{% endblock %}
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-semibold" href="{{ path('app_home') }}">
+                    <span class="brand-accent">Sym</span>App
+                </a>
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                        aria-controls="navbarMain" aria-expanded="false" aria-label="Menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    {% set currentRoute = app.request.attributes.get('_route') %}
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {{ currentRoute == 'app_home' ? 'active' }}"
+                               href="{{ path('app_home') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ currentRoute == 'app_demo' ? 'active' }}"
+                               href="{{ path('app_demo') }}">Démo Assets</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav align-items-center gap-2">
+                        {% if app.user %}
+                            <li class="nav-item">
+                                <span class="nav-link text-secondary small">{{ app.user.userIdentifier }}</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">Déconnexion</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" href="{{ path('app_login') }}">Connexion</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-4">
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="bg-dark text-secondary py-3 mt-auto">
+            <div class="container text-center">
+                <small>Template Symfony 7 — BTS SIO</small>
+            </div>
+        </footer>
+
     </body>
 </html>
