@@ -1,0 +1,27 @@
+name: Déploiement Symfony
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Update code et installation des dépendances
+      run: |
+        cd /var/www/symfony
+        git reset --hard
+        git pull
+        composer install --no-dev --optimize-autoloader
+
+    - name: Mettre à jour la base de données
+      run: |
+        cd /var/www/symfony
+        php bin/console doctrine:migrations:migrate --no-interaction
+        php bin/console doctrine:migrations:migrate --no-interaction
+        php bin/console importmap:update
+        php bin/console asset-map:compile
+        php bin/console cache:clear
